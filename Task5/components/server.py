@@ -34,7 +34,7 @@ class server:
         except:
             return False
 
-    def start(self):
+    def mtd_server_start(self):
         socket_obj_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket_obj_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         socket_obj_server.bind((self.host, self.port))

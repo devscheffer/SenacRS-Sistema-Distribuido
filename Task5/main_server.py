@@ -6,4 +6,4 @@ path.append(cwd)
 from Task5.components.server import server
 
 mural = server()
-mural.start()
+mural.mtd_server_start()

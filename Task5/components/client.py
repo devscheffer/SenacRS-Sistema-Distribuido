@@ -32,7 +32,7 @@ class cls_client:
     def username_client(self):
         return self.__username_client
 
-    def start(self):
+    def mtd_client_start(self):
         socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket_client.connect((self.host, self.port))
         # Para nao ser tcp
