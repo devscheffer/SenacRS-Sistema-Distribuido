@@ -1,0 +1,30 @@
+Meu Thread: 0
+Main: 0
+MeuRunnable: 0
+Meu Thread: 1
+MeuRunnable: 1
+Main: 1
+Main: 2
+MeuRunnable: 2
+Meu Thread: 2
+Main: 3
+Meu Thread: 3
+MeuRunnable: 3
+Main: 4
+Meu Thread: 4
+MeuRunnable: 4
+MeuRunnable: 5
+Meu Thread: 5
+Main: 5
+MeuRunnable: 6
+Meu Thread: 6
+Main: 6
+MeuRunnable: 7
+Meu Thread: 7
+Main: 7
+MeuRunnable: 8
+Meu Thread: 8
+Main: 8
+Main: 9
+Meu Thread: 9
+MeuRunnable: 9
