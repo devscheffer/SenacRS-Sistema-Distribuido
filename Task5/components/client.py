@@ -1,51 +1,68 @@
 import socket
-import select
 import errno
 import sys
 
 
 class cls_client:
-	def __init__(self):
-		pass
-	def start(self):
-		buffer = 1024
+    def __init__(
+        self,
+        username_client: str,
+        buffer: int = 1024,
+        host: str = "localhost",
+        port: int = 50007,
+    ):
+        self.__buffer = buffer
+        self.__host = host
+        self.__port = port
+        self.__username_client = username_client
 
-		host = "localhost"
-		port = 50007
+    @property
+    def buffer(self):
+        return self.__buffer
 
-		username_client = input("Nome de usuario:\n ")
+    @property
+    def host(self):
+        return self.__host
 
-		socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		socket_client.connect((host, port))
-		# Para nao ser tcp
-		socket_client.setblocking(False)
-		username = username_client.encode('utf-8')
-		username_header = f"{len(username):<{buffer}}".encode('utf-8')
-		socket_client.send(username_header + username)
+    @property
+    def port(self):
+        return self.__port
 
-		while True:
-			message = input(f'{username_client} > ')
-			if message:
-				message = message.encode('utf-8')
-				message_header = f"{len(message):<{buffer}}".encode('utf-8')
-				socket_client.send(message_header + message)
+    @property
+    def username_client(self):
+        return self.__username_client
 
-			try:
-				while True:
-					username_header = socket_client.recv(buffer)
-					if not len(username_header):
-						print('Connection closed by the server')
-						sys.exit()
-					username_length = int(username_header.decode('utf-8').strip())
-					username = socket_client.recv(username_length).decode('utf-8')
-					message_header = socket_client.recv(buffer)
-					message_length = int(message_header.decode('utf-8').strip())
-					message = socket_client.recv(message_length).decode('utf-8')
-					print(f'<{username}> {message}')
+    def start(self):
+        socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        socket_client.connect((self.host, self.port))
+        # Para nao ser tcp
+        socket_client.setblocking(False)
+        username = self.username_client.encode("utf-8")
+        username_header = f"{len(username):<{self.buffer}}".encode("utf-8")
+        socket_client.send(username_header + username)
 
-			except IOError as e:
-				if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
-					print('Reading error: {}'.format(str(e)))
-					sys.exit()
-				continue
+        while True:
+            message = input(f"{self.username_client} > ")
+            if message:
+                message = message.encode("utf-8")
+                message_header = f"{len(message):<{self.buffer}}".encode("utf-8")
+                socket_client.send(message_header + message)
 
+            try:
+                while True:
+                    username_header = socket_client.recv(self.buffer)
+                    if not len(username_header):
+                        print("Connection closed by the server")
+                        sys.exit()
+                    username_length = int(username_header.decode("utf-8").strip())
+                    username = socket_client.recv(username_length).decode("utf-8")
+                    message_header = socket_client.recv(self.buffer)
+                    message_length = int(message_header.decode("utf-8").strip())
+                    message = socket_client.recv(message_length).decode("utf-8")
+                    print(f"<{username}> {message}")
+
+            except IOError as e:
+                if e.errno != errno.EAGAIN and e.errno != errno.EWOULDBLOCK:
+                    print("Reading error: {}".format(str(e)))
+                    sys.exit()
+                continue
