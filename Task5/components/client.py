@@ -1,3 +1,4 @@
+import re
 import socket
 import errno
 import sys
@@ -6,15 +7,13 @@ import sys
 class cls_client:
     def __init__(
         self,
-        username_client: str,
         buffer: int = 1024,
         host: str = "localhost",
         port: int = 50007,
-    ):
+    )->None:
         self.__buffer = buffer
         self.__host = host
         self.__port = port
-        self.__username_client = username_client
 
     @property
     def buffer(self):
@@ -32,14 +31,28 @@ class cls_client:
     def username_client(self):
         return self.__username_client
 
+    @username_client.setter
+    def username_client(self,value):
+        teste=re.findall(r'^([a-z])', value)
+        if len(teste) > 0:
+            self.__username_client = value
+        else:
+            raise ValueError("Nome de usuario invalido: deve comecar com letra")
+
     def mtd_client_start(self):
         socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         socket_client.connect((self.host, self.port))
+
         # Para nao ser tcp
         socket_client.setblocking(False)
+
         username = self.username_client.encode("utf-8")
-        username_header = f"{len(username):<{self.buffer}}".encode("utf-8")
-        socket_client.send(username_header + username)
+
+        username_formatted=f"{len(username):<{self.buffer}}"
+        username_header = username_formatted.encode("utf-8")
+
+        username_header_formatted=username_header + username
+        socket_client.send(username_header_formatted)
 
         while True:
             message = input(f"{self.username_client} > ")
