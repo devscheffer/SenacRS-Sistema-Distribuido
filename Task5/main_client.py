@@ -3,7 +3,7 @@ from sys import path
 
 cwd = getcwd()
 path.append(cwd)
-from Task5.components.client import cls_client
+from Task5.src.client import cls_client
 
 
 # buffer = 1024

@@ -3,7 +3,7 @@ import sys
 
 cwd = os.getcwd()
 sys.path.append(cwd)
-from Task5.components.server import server
+from Task5.src.server import server
 
 # buffer= 1024
 buffer = 10
