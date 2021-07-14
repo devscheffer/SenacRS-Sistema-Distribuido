@@ -1,11 +1,14 @@
-from os import getcwd
-from sys import path
+import os
+import sys
 
-cwd = getcwd()
-path.append(cwd)
+cwd = os.getcwd()
+sys.path.append(cwd)
 from Task5.components.server import server
 
-from threading import Thread
+# buffer= 1024
+buffer = 10
+host = "localhost"
+port = 50007
 
-mural = server()
+mural = server(buffer=buffer, host=host, port=port)
 mural.mtd_server_start()
