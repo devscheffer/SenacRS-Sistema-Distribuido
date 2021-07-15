@@ -1,6 +1,7 @@
 import datetime
 
-def fn_write_log(event_type:str,event_data:dict, path_output: str = "./Task5/data/log.txt"):
+def fn_write_log(event_type:str,event_data:dict,file_name:str='geral',log_path:str="./Task5/data"):
+    path_output = f'{log_path}/log_{file_name}.txt'
     log_text = {
                 "event_type": event_type,
                 "event_data": event_data

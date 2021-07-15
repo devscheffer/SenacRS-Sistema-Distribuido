@@ -1,10 +1,14 @@
+
+import errno
+import json
+import os
 import re
 import socket
-import errno
 import sys
 
-import re
-import json
+cwd = os.getcwd()
+sys.path.append(cwd)
+from Task5.src.log import fn_write_log
 
 
 class cls_client:
@@ -65,7 +69,7 @@ class cls_client:
 		lst_group = self.__mtd_create_lst_group(group_pattern, text.lower())
 		text_v2 = re.sub(f"{group_pattern}", "", text).strip()
 		dict_message = {"message": text_v2, "lst_group": lst_group}
-		return json.dumps(dict_message)
+		return dict_message
 
 	def mtd_client_start(self):
 		socket_client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -74,18 +78,22 @@ class cls_client:
 		# Para nao ser tcp
 		socket_client.setblocking(False)
 		dict_user = {"user_name": self.client_user_name, "group": self.group}
-		dict_user = json.dumps(dict_user).encode("utf-8")
+		dict_user_bin = json.dumps(dict_user).encode("utf-8")
+		username_formatted = f"{len(dict_user_bin):<{self.buffer}}".encode("utf-8")
 
-		username_formatted = f"{len(dict_user):<{self.buffer}}".encode("utf-8")
-
-		user_info = username_formatted + dict_user
+		user_info = username_formatted + dict_user_bin
 		socket_client.send(user_info)
 
 		while True:
 			message_input = input(f"{self.client_user_name} > ")
-			message = self.__mtd_create_dict_message(message_input)
-			if message:
-				message = message.encode("utf-8")
+			dict_message = self.__mtd_create_dict_message(message_input)
+			dict_message_bin = json.dumps(dict_message).encode("utf-8")
+			if dict_message_bin:
+				event_type= 'user_message'
+				event_data = {"user": dict_user, "message": dict_message}
+				fn_write_log(event_type,event_data,dict_user['group'])
+
+				message = dict_message_bin
 				message_header = f"{len(message):<{self.buffer}}".encode("utf-8")
 				socket_client.send(message_header + message)
 

@@ -65,19 +65,20 @@ class server:
 
         group = dict_user["data"]["group"]
         user_socket = {"socket": socket_obj_client, "user": dict_user}
-        for i in [group, "geral"]:
-            if i in self.dct_group_clients:
-                self.dct_group_clients[i].append(user_socket)
+        for group in [group, "geral"]:
+            if group in self.dct_group_clients:
+                self.dct_group_clients[group].append(user_socket)
             else:
-                self.dct_group_clients[i] = [user_socket]
+                self.dct_group_clients[group] = [user_socket]
+            event_type= 'login'
+            event_data = {'user': dict_user,"adress": client_address}
+            fn_write_log(event_type,event_data,group)
+
         print(f"-> Login de novo usuario")
         print(f"    Endereco: {client_address[0]}:{client_address[1]}")
         print(f"    Usuario : {dict_user['data']['user_name']}")
         print(f"    Grupo   : {dict_user['data']['group']}")
 
-        event_type= 'login'
-        event_data = {'user': dict_user,"adress": client_address}
-        fn_write_log(event_type,event_data)
         return dct_clients_v2, sockets_list_v2
 
     def mtd_user_logout(
@@ -96,9 +97,10 @@ class server:
             sockets_list_v2.remove(socket_notified)
             dct_clients_v2.pop(socket_notified, None)
 
-            event_type= 'logout'
-            event_data =  {"user": dict_user}
-            fn_write_log(event_type,event_data)
+            for group in [dict_user["group"], "geral"]:
+                event_type= 'logout'
+                event_data =  {"user": dict_user}
+                fn_write_log(event_type,event_data,group)
             return dct_clients_v2, sockets_list_v2
 
     def mtd_send_to_connection(
@@ -114,13 +116,18 @@ class server:
         print(f"    {dict_message['data']['message']}")
 
 
-
-        event_type= 'user_message'
-        event_data = {"user": dict_user, "message": dict_message}
-        fn_write_log(event_type,event_data)
-
         for group in dict_message["data"]["lst_group"]:
-            for client in self.dct_group_clients[group]:
+            if group in self.dct_group_clients:
+                list_client = self.dct_group_clients[group]
+            else:
+                group = 'geral'
+                list_client = self.dct_group_clients[group]
+
+            event_type= 'user_message'
+            event_data = {"user": dict_user, "message": dict_message}
+            fn_write_log(event_type,event_data,group)
+
+            for client in list_client:
                 socket_obj_client = client["socket"]
                 if socket_obj_client != socket_notified:
                     message_info = (
