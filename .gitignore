@@ -1,3 +1,5 @@
 .vscode/
-Task5/components/__pycache__*
+__pycache__/
 draft*
+log/
+Task5/src/__pycache__/
